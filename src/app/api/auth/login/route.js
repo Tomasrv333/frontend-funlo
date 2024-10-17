@@ -23,6 +23,6 @@ export async function POST(req) {
             return NextResponse.json({ status: data.status, message: data.message }, { status: response.status });
         }
     } catch(error) {
-        return NextResponse.json({ status: data.status, message: data.message }, { status: response.status });
+        return NextResponse.json({ status: response.status, message: response.message }, { status: response.status });
     }
 }
