@@ -2,7 +2,7 @@ import CourseCard from '../../components/courses/courseCard';
 
 export default function Page() {
     return (
-        <>
+        <div className='p-6'>
             <div className="bg-primary h-[30vh] rounded-lg mb-8">
                 
             </div>
@@ -17,6 +17,6 @@ export default function Page() {
                     <CourseCard/>
                 </div>
             </div>
-        </>
+        </div>
     );  
 }
