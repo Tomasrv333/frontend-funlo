@@ -5,7 +5,7 @@ export async function POST(req) {
   const { email, password } = body;
 
   const apiUrl = `${process.env.API_URL}/users/login`;
-  const apiUrlValidation = `${process.env.API_URL}/users/validation`;
+  const apiUrlValidation = `${process.env.API_URL}/users/validate`;
 
     try {
         const response = await fetch(apiUrl, {
@@ -24,23 +24,21 @@ export async function POST(req) {
 
             try {
                 const validationResponse = await fetch(apiUrlValidation, {
-                    method: 'POST',
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`, // Envía el token como encabezado
                     },
-                    body: JSON.stringify({}), // No es necesario enviar datos adicionales
                 });
 
                 const validationData = await validationResponse.json();
 
-                if (validationResponse.ok) {
+                if (validationData.status == 200) {
                     // 3. Devuelve el token y el mensaje de éxito al frontend
                     return NextResponse.json({
                         status: validationData.status,
                         message: validationData.message,
-                        token: token, // Retorna el token
-                        refreshToken: data.refreshToken, // Refresh token opcional
+                        token: token,
                     }, { status: 200 });
                 } else {
                     return NextResponse.json({
