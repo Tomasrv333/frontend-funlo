@@ -5,10 +5,15 @@ const UserContext = createContext();
 
 // Proveedor del contexto
 export const UserProvider = ({ children }) => {
-  const [userId, setUserId] = useState(() => {
+  const [userId, setUserId] = useState(''); // Inicialmente vacío
+
+  useEffect(() => {
     // Leer el ID del usuario desde localStorage al iniciar
-    return localStorage.getItem('userId') || ''; 
-  });
+    const storedUserId = localStorage.getItem('userId');
+    if (storedUserId) {
+      setUserId(storedUserId);
+    }
+  }, []); // Se ejecuta solo una vez al montar el componente
 
   useEffect(() => {
     // Guardar el ID del usuario en localStorage cuando cambie
