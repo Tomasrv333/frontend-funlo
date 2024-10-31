@@ -1,6 +1,6 @@
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-neutral-100">
       <h1 className="text-4xl font-bold mb-6">Bienvenido a Funlo</h1>
       <p className="text-lg text-gray-700 mb-8">
         Mejora tu experiencia de aprendizaje con nuestra plataforma de cursos y foros.

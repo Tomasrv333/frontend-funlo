@@ -21,6 +21,7 @@ export async function POST(req) {
         if (response.ok) {
             // 2. Valida el token inmediatamente después de recibirlo
             const token = data.token; // Asumimos que el token viene en la respuesta del login
+            const userId = data.userId;
 
             try {
                 const validationResponse = await fetch(apiUrlValidation, {
@@ -38,6 +39,7 @@ export async function POST(req) {
                     return NextResponse.json({
                         status: validationData.status,
                         message: validationData.message,
+                        userId: userId,
                         token: token,
                     }, { status: 200 });
                 } else {

@@ -1,5 +1,8 @@
+"use client"
+
 import localFont from "next/font/local";
 import "./globals.css";
+import { UserProvider } from './context/userContext';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -12,13 +15,14 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-export const metadata = {
-  title: "Funlo, Cursos en linea",
-  description: "Cursos universitarios en linea.",
-};
+// export const metadata = {
+//   title: "Funlo, Cursos en linea",
+//   description: "Cursos universitarios en linea.",
+// };
 
 export default function RootLayout({ children }) {
   return (
+    <UserProvider>
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -26,5 +30,6 @@ export default function RootLayout({ children }) {
         {children}
       </body>
     </html>
+    </UserProvider>
   );
 }

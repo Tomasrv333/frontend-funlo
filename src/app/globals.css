@@ -26,13 +26,22 @@ body {
 }
 
 input {
-  border-radius: 8px;
+  height: 40px;
+  border-radius: 6px;
   padding: 8px 12px;
-  border: 1px solid #727273;
+  border: 1px solid #e5e5e5;
 }
 
-button {
-  border-radius: 8px;
+select {
+  height: 40px;
+  border-radius: 6px;
+  padding: 8px 12px;
+  border: 1px solid #e5e5e5;
+}
+
+button, .btn-primary {
+  height: 40px;
+  border-radius: 6px;
   padding: 8px 12px;
   background-color: #036988;
   color: white;
@@ -41,6 +50,33 @@ button {
 
 button:hover {
   background-color: #ff7e01;
+  transition: .2s;
+}
+
+a {
+  border-bottom: 2px solid transparent;
+  transition: .2s;
+}
+
+a:hover {
+  border-bottom: 2px solid #ff7e01;
+  transition: .2s;
+}
+
+.btn-secondary {
+  height: 40px;
+  border-radius: 6px;
+  padding: 8px 12px;
+  background-color: transparent;
+  color: #036988;
+  border: 1px solid #036988;
+  transition: .2s;
+}
+
+.btn-secondary:hover {
+  color: white;
+  border: 1px solid #036988;
+  background-color: #036988;
   transition: .2s;
 }
 

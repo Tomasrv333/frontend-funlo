@@ -6,12 +6,14 @@ import Link from 'next/link';
 import Cookies from 'js-cookie';
 import LoaderOverlay from '../../components/loaders/spinnerOverlay';
 import AlertNotification from '../../components/notifications/formNotification';
+import { useUser } from '../../context/userContext';
 
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [notification, setNotification] = useState({ message: '', status: null });
     const [isLoading, setIsLoading] = useState(false);
+    const { login, userId } = useUser();
     const router = useRouter();
 
     const handleLogin = async (e) => {
@@ -29,8 +31,6 @@ export default function Login() {
 
             const data = await response.json();
 
-            console.log(data)
-
             if (data.status == 200) {
                 // Guarda el token en una cookie
                 Cookies.set('token', data.token, { 
@@ -38,6 +38,8 @@ export default function Login() {
                     secure: true,
                     sameSite: 'strict'
                 });
+
+                login(data.userId);
 
                 // Redirigir al dashboard
                 router.push('/pages/dashboard');
