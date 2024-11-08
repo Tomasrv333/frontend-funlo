@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Cookies from 'js-cookie';
+import CourseCard from '../../../components/courses/courseCard';
 
 const CoursesPage = () => {
   const router = useRouter();
@@ -171,7 +172,7 @@ const CoursesPage = () => {
             </div>
 
             {/* Lista de cursos filtrados */}
-            <div className="courses-list mt-5 grid gap-4 grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
+            <div className="courses-list mt-5 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
                 {isLoading && <p>Cargando cursos...</p>}
                 {courses.length === 0 && !isLoading && (
                     <p>No hay cursos disponibles que coincidan con los filtros aplicados.</p>
@@ -179,13 +180,16 @@ const CoursesPage = () => {
                 {courses.map(course => (
                     <div
                         key={course._id}
-                        className="course-card border p-4 rounded shadow"
+                        className='cursor-pointer'
                         onClick={() => router.push(`/pages/dashboard/courses/${course._id}`)}
                     >
-                        <img src={getYouTubeThumbnail(course.videoUrl)} alt={course.title} className="mb-2" />
-                        <h3 className="font-bold">{course.title}</h3>
-                        <p>{course.description}</p>
-                        <span>{course.rating} ★</span>
+                        {/* Reemplazamos el contenido por el componente CourseCard */}
+                        <CourseCard 
+                            url={course.url}
+                            title={course.title}
+                            author={course.author}
+                            rating={course.rating}
+                        />
                     </div>
                 ))}
             </div>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Cookies from 'js-cookie';
+import ReactPlayer from 'react-player';
 
 const CourseDetail = ({params}) => {
     const searchParams = useSearchParams();
@@ -45,8 +46,16 @@ const CourseDetail = ({params}) => {
         <div>
             {notification && <div>{notification.message}</div>}
             {course ? (
-                <div>
-                    <h1>{course.title}</h1>
+                <div className='flex flex-col gap-4'>
+                    <h1 className='font-bold text-lg text-neutral-700'>{course.title}</h1>
+                    <div className="video-container">
+                        <ReactPlayer
+                            url={course.url} // Pasa la URL completa del video
+                            width="100%"    // Establece el ancho al 100%
+                            height="50vh"   // Establece la altura automáticamente
+                            controls={true} // Activa los controles del reproductor
+                        />
+                    </div>
                     <p>{course.description}</p>
                     {/* Muestra más detalles del curso según sea necesario */}
                 </div>
