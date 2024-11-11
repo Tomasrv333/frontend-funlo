@@ -37,7 +37,7 @@ const CoursesPage = () => {
                 });
 
                 const data = await response.json();
-                console.log(data.areas)
+
                 if (response.ok) {
                     setAreas(data.areas);
                 } else {

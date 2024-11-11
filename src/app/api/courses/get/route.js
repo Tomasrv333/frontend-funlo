@@ -4,6 +4,7 @@ export async function GET(req) {
   // Obtiene los parámetros de consulta desde la URL
   const { searchParams } = new URL(req.url);
   const name = searchParams.get('name') || ''; // Filtro por nombre de curso
+  const userId = searchParams.get('userId') || '';
   const areaId = searchParams.get('areaId') || ''; // Filtro por área (padre)
   const categoryId = searchParams.get('categoryId') || ''; // Filtro por categoría (hijo)
   const rating = searchParams.get('rating') || ''; // Filtro por calificación
@@ -18,6 +19,7 @@ export async function GET(req) {
 
   // Aplica los filtros de búsqueda a los parámetros de consulta
   if (name) queryParams.append('name', name);  // Filtro por nombre de curso
+  if (userId) queryParams.append('userId', userId);
   if (areaId) queryParams.append('areaId', areaId);  // Filtro por área
   if (categoryId) queryParams.append('categoryId', categoryId);  // Filtro por categoría
   if (rating) queryParams.append('rating', rating);  // Filtro por calificación

@@ -15,8 +15,8 @@ export default function Layout({ children }) {
           <a href='/pages/dashboard/courses/user/create' className=''>Subir curso</a>
         </div>    
       </div>
-      <div className="w-full flex justify-center p-6">
-        <div className="w-full">{children}</div>
+      <div className="w-full flex justify-center h-[calc(100%-8rem)]">
+        <div className="w-full p-6 overflow-y-auto overflow-x-hidden">{children}</div>
       </div>
     </div>
   );

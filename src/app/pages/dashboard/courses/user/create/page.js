@@ -9,10 +9,9 @@ import AlertNotification from '../../../../../components/notifications/formNotif
 const CourseForm = () => {
     const { userId } = useUser();
     const router = useRouter();
-
     const [notification, setNotification] = useState({ message: '', status: null });
     const [areas, setAreas] = useState([]);
-    const [categories, setCategories] = useState([]);
+    const token = Cookies.get('token');
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -22,7 +21,16 @@ const CourseForm = () => {
         categoryId: '',
         areaId: ''
     });
-    const token = Cookies.get('token');
+
+    // Hook para actualizar creatorId en formData cuando userId esté disponible
+    useEffect(() => {
+        if (userId) {
+            setFormData(prevFormData => ({
+                ...prevFormData,
+                creatorId: userId
+            }));
+        }
+    }, [userId]);
 
     // Cargar áreas y categorías
     useEffect(() => {
@@ -36,7 +44,7 @@ const CourseForm = () => {
               }
           });
           const data = await response.json();
-          console.log(data.areas)
+
           if (response.ok) {
               setAreas(data.areas);
           } else {
@@ -79,6 +87,7 @@ const CourseForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log(formData)
         try {
             const response = await fetch('/api/courses/post', {
                 method: 'POST',
@@ -151,7 +160,7 @@ const CourseForm = () => {
                     >
                         <option value="">Selecciona un área</option>
                         {areas.map((area) => (
-                            <option key={area._id} value={area._id}>{area.name}</option>
+                            <option key={area.id} value={area.id}>{area.name}</option>
                         ))}
                     </select>
                 </div>
@@ -166,7 +175,6 @@ const CourseForm = () => {
                         className="w-full border rounded p-2"
                     >
                       <option value="">Selecciona una categoría</option>
-                      {console.log(filteredCategories)}
                       {filteredCategories.map((category) => (
                         <option key={category.id} value={category.id}>{category.name}</option>
                       ))}
