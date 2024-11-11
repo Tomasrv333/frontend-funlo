@@ -1,52 +1,57 @@
 import { NextResponse } from 'next/server';
 
+// Definir el endpoint GET para obtener categorías y áreas
 export async function GET(req) {
-  // Obtiene los parámetros de consulta desde la URL
   const { searchParams } = new URL(req.url);
-  const name = searchParams.get('name') || ''; // Puedes usar este parámetro si necesitas filtrar por nombre
-  const token = req.headers.get('Authorization')?.split(' ')[1]; // Extrae el token del encabezado
+  const name = searchParams.get('name') || '';
+  const token = req.headers.get('Authorization')?.split(' ')[1];
 
-  // Construye la URL de la API con los parámetros de consulta
   const apiUrl = `${process.env.API_URL}/categories`;
   const queryParams = new URLSearchParams();
 
-  if (name) queryParams.append('name', name); // Agrega el nombre a los parámetros de consulta si es necesario
+  if (name) {
+    queryParams.append('name', name);
+  }
 
   const requestUrl = `${apiUrl}?${queryParams.toString()}`;
 
   try {
-    console.log(token);
-
     const response = await fetch(requestUrl, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        // Agregar el token si está disponible
         ...(token && { 'Authorization': `Bearer ${token}` }),
       },
     });
 
     const data = await response.json();
-
     if (response.ok) {
-      // Responde con los datos de las categorías si la solicitud es exitosa
+      const areas = data.data
+        .filter((item) => item.type === 'area')
+        .map((area) => ({
+          id: area._id,
+          name: area.name,
+          categories: area.subcategories.map((category) => ({
+            id: category._id,
+            name: category.name,
+          })),
+        }));
+
       return NextResponse.json({
         status: 200,
-        categories: data,
+        areas,
       }, { status: 200 });
     } else {
-      // Maneja errores de la API de categorías
       return NextResponse.json({
         status: response.status,
-        message: data.message || 'Error al obtener las categorías',
+        message: data.message || 'Error al obtener las categorías y áreas',
       }, { status: response.status });
     }
   } catch (error) {
-    console.error('Error al conectar con la API de categorías:', error);
-    // Respuesta en caso de error en la conexión o petición
+    console.error('Error al conectar con la API de categorías y áreas:', error);
     return NextResponse.json({
       status: 500,
-      message: 'No es posible conectarse con el servidor de categorías.',
+      message: 'No es posible conectarse con el servidor de categorías y áreas.',
     }, { status: 500 });
   }
 }

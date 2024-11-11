@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
@@ -8,139 +8,147 @@ import Cookies from 'js-cookie';
 import CourseCard from '../../../components/courses/courseCard';
 
 const CoursesPage = () => {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [notification, setNotification] = useState({ message: '', status: null });
-  const [categories, setCategories] = useState([]);
-  const [courses, setCourses] = useState([]);
-  const [filters, setFilters] = useState({
-      name: '',
-      categoryId: '',
-      rating: '',
-      startDate: null,
-      endDate: null
-  });
+    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
+    const [notification, setNotification] = useState({ message: '', status: null });
+    const [categories, setCategories] = useState([]);
+    const [areas, setAreas] = useState([]);
+    const [courses, setCourses] = useState([]);
+    const [filters, setFilters] = useState({
+        name: '',
+        areaId: '',
+        categoryId: '',
+        rating: '',
+        startDate: null,
+        endDate: null,
+    });
 
-  // Cargar categorías
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const token = Cookies.get('token');
+    // Cargar categorías y áreas desde el mismo endpoint
+    useEffect(() => {
+        const fetchCategoriesAndAreas = async () => {
+            const token = Cookies.get('token');
+            try {
+                const response = await fetch('/api/categories/get', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token && { 'Authorization': `Bearer ${token}` }),
+                    },
+                });
 
-      try {
-        const response = await fetch('/api/categories/get', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token && { 'Authorization': `Bearer ${token}` }) // Solo agrega el token si existe
-          },
-        });
+                const data = await response.json();
+                console.log(data.areas)
+                if (response.ok) {
+                    setAreas(data.areas);
+                } else {
+                    console.error('Error al obtener categorías y áreas:', data.message);
+                }
+            } catch (error) {
+                console.error('Error al obtener categorías y áreas:', error);
+            }
+        };
 
-        const data = await response.json();
+        fetchCategoriesAndAreas();
+    }, []);
 
-        if (response.ok) {
-          setCategories(data.categories.categories || []);
-        } else {
-          setNotification({ message: data.message || 'Error al obtener las categorías', status: data.status });
-        }
-      } catch (error) {
-        console.error('Error al conectar con la API de categorías:', error);
-        setNotification({ message: 'Error en la conexión al servidor', status: 500 });
-      }
-    };
+    // Cargar cursos basado en los filtros
+    useEffect(() => {
+        const fetchCourses = async () => {
+            setIsLoading(true);
+            setCourses([]);
+            const { name, areaId, categoryId, rating, startDate, endDate } = filters;
 
-    fetchCategories();
-  }, []);
+            const queryParams = new URLSearchParams();
+            if (name) queryParams.append('name', name);
+            if (areaId) queryParams.append('areaId', areaId);
+            if (categoryId) queryParams.append('categoryId', categoryId);
+            if (rating) queryParams.append('rating', rating);
+            if (startDate) queryParams.append('startDate', startDate.toISOString());
+            if (endDate) queryParams.append('endDate', endDate.toISOString());
 
-  // Cargar cursos basado en los filtros
-  useEffect(() => {
-    const fetchCourses = async () => {
-      setIsLoading(true);
-      const { name, categoryId, rating, startDate, endDate } = filters;
+            const requestUrl = `/api/courses/get?${queryParams.toString()}`;
 
-      const queryParams = new URLSearchParams();
-      if (name) queryParams.append('name', name);
-      if (categoryId) queryParams.append('category', categoryId);
-      if (rating) queryParams.append('rating', rating);
-      if (startDate) queryParams.append('startDate', startDate.toISOString());
-      if (endDate) queryParams.append('endDate', endDate.toISOString());
+            try {
+                const response = await fetch(requestUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${Cookies.get('token')}`, // Agregar el token si es necesario
+                    },
+                });
 
-      const requestUrl = `/api/courses/get?${queryParams.toString()}`;
+                const data = await response.json();
+                
+                if (response.ok) {
+                    setCourses(data.courses || []);
+                } else {
+                    setNotification({ message: data.message || 'Error al obtener los cursos', status: data.status });
+                }
+            } catch (error) {
+                console.error('Error al conectar con la API de cursos:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-      try {
-          const response = await fetch(requestUrl, {
-              method: 'GET',
-              headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${Cookies.get('token')}` // Agregar el token si es necesario
-              }
-          });
-
-          const data = await response.json();
-          if (response.ok) {
-              setCourses(data.courses || []);
-          } else {
-              setNotification({ message: data.message || 'Error al obtener los cursos', status: data.status });
-          }
-      } catch (error) {
-          console.error('Error al conectar con la API de cursos:', error);
-          setNotification({ message: 'Error en la conexión al servidor', status: 500 });
-      } finally {
-          setIsLoading(false);
-      }
-    };
-
-    fetchCourses();
-  }, [filters]);
+        fetchCourses();
+    }, [filters]);
 
     // Manejar cambios en los filtros
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         setFilters((prev) => ({
             ...prev,
-            [name]: value
+            [name]: value,
         }));
     };
 
-    const getYouTubeThumbnail = (url) => {
-      // Verifica que la URL no sea undefined o una cadena vacía
-      if (!url || typeof url !== 'string') {
-          console.error('URL no válida:', url);
-          return ''; // Retorna una cadena vacía o una URL de imagen por defecto
-      }
-  
-      const videoId = url.split('v=')[1];
-      if (!videoId) {
-          console.error('No se pudo obtener el video ID de la URL:', url);
-          return ''; // Retorna una cadena vacía o una URL de imagen por defecto
-      }
-  
-      return `https://img.youtube.com/vi/${videoId}/0.jpg`;
-  };
-  
+    const filteredCategories = filters.areaId
+    ? areas.find((area) => area.id === filters.areaId)?.categories || []
+    : [];
 
     return (
         <div className="search-bar">
             {/* Barra de búsqueda con filtros */}
             <div className="filter-wrapper w-full flex justify-between items-end">
                 <div className="filter-menu flex items-center gap-3">
-                    <div className='w-fit flex flex-col'>
-                        <label>Categoría:</label>
+                    {/* Filtro de Área */}
+                    <div className="w-fit flex flex-col">
+                        <label>Área:</label>
                         <select
-                            value={filters.categoryId}
-                            onChange={(e) => setFilters({ ...filters, categoryId: e.target.value })}
+                            name="areaId"
+                            value={filters.areaId}
+                            onChange={handleFilterChange}
                         >
-                            <option value="">Todas las categorías</option>
-                            {categories.map(category => (
-                                <option key={category._id} value={category._id}>{category.name}</option>
+                            <option value="">Todas las áreas</option>
+                            {areas.map((area) => (
+                                <option key={area.id} value={area.id}>{area.name}</option>
                             ))}
                         </select>
                     </div>
 
-                    <div className='w-fit flex flex-col'>
+                    <div className="w-fit flex flex-col">
+                        <label>Carrera:</label>
+                        <select
+                            name="categoryId"
+                            value={filters.categoryId}
+                            onChange={handleFilterChange}
+                            disabled={!filters.areaId}
+                        >
+                            <option value="">Todas las carreras</option>
+                            {filteredCategories.map((category) => (
+                                <option key={category.id} value={category.id}>{category.name}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Filtro de Calificación */}
+                    <div className="w-fit flex flex-col">
                         <label>Calificación:</label>
                         <select
+                            name="rating"
                             value={filters.rating}
-                            onChange={(e) => setFilters({ ...filters, rating: e.target.value })}
+                            onChange={handleFilterChange}
                         >
                             <option value="">Todas las calificaciones</option>
                             <option value="4">4 estrellas y más</option>
@@ -148,7 +156,8 @@ const CoursesPage = () => {
                         </select>
                     </div>
 
-                    <div className='w-fit flex flex-col'>
+                    {/* Filtro de Fecha de Inicio */}
+                    <div className="w-fit flex flex-col">
                         <label>Fecha de inicio:</label>
                         <DatePicker
                             selected={filters.startDate}
@@ -157,7 +166,8 @@ const CoursesPage = () => {
                         />
                     </div>
 
-                    <div className='w-fit flex flex-col'>
+                    {/* Filtro de Fecha de Fin */}
+                    <div className="w-fit flex flex-col">
                         <label>Fecha de fin:</label>
                         <DatePicker
                             selected={filters.endDate}
@@ -166,6 +176,7 @@ const CoursesPage = () => {
                         />
                     </div>
                 </div>
+
                 <button onClick={() => setFilters({ ...filters })} className="btn-secondary">
                     Aplicar filtros
                 </button>
@@ -180,7 +191,7 @@ const CoursesPage = () => {
                 {courses.map(course => (
                     <div
                         key={course._id}
-                        className='cursor-pointer'
+                        className="cursor-pointer"
                         onClick={() => router.push(`/pages/dashboard/courses/${course._id}`)}
                     >
                         {/* Reemplazamos el contenido por el componente CourseCard */}
@@ -189,16 +200,11 @@ const CoursesPage = () => {
                             title={course.title}
                             author={course.author}
                             rating={course.rating}
+                            thumbnailUrl={course.thumbnailUrl}
                         />
                     </div>
                 ))}
             </div>
-
-            {notification.message && (
-                <div className={`notification ${notification.status === 200 ? 'success' : 'error'}`}>
-                    {notification.message}
-                </div>
-            )}
         </div>
     );
 };
