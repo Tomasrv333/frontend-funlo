@@ -30,6 +30,11 @@ input {
   border-radius: 0.5rem;
   padding: 8px 12px;
   border: 1px solid #e5e5e5;
+  color:#404040;
+}
+
+input:focus {
+  outline: none;
 }
 
 select {
@@ -37,6 +42,7 @@ select {
   border-radius: 0.5rem;
   padding: 8px 12px;
   border: 1px solid #e5e5e5;
+  color:#404040;
 }
 
 button, .btn-primary {

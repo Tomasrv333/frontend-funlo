@@ -6,8 +6,10 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Cookies from 'js-cookie';
 import CourseCard from '../../../components/courses/courseCard';
+import { useSearchParams } from 'next/navigation';
 
 const CoursesPage = () => {
+    const searchParams = useSearchParams();
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [notification, setNotification] = useState({ message: '', status: null });
@@ -22,6 +24,18 @@ const CoursesPage = () => {
         startDate: null,
         endDate: null,
     });
+
+    // Leer el parámetro de búsqueda desde la URL y actualizar filtros solo cuando los parámetros estén disponibles
+    useEffect(() => {
+        const nameParam = searchParams.get('name'); // Obtener el parámetro 'name' desde la URL
+
+        if (nameParam) {
+            setFilters((prev) => ({
+                ...prev,
+                name: nameParam || '',
+            }));
+        }
+    }, [searchParams]);
 
     // Cargar categorías y áreas desde el mismo endpoint
     useEffect(() => {
@@ -101,6 +115,10 @@ const CoursesPage = () => {
             ...prev,
             [name]: value,
         }));
+
+        // Actualizar la URL con los filtros seleccionados
+        const updatedQuery = new URLSearchParams(filters).toString();
+        router.push(`/courses?${updatedQuery}`); // Actualiza la URL en la barra de direcciones
     };
 
     const filteredCategories = filters.areaId
