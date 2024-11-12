@@ -31,6 +31,7 @@ const Page = () => {
         });
 
         const data = await response.json();
+        console.log(data)
         setIsLoading(false);
 
         if (response.ok) {
