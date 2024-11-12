@@ -196,7 +196,6 @@ const CoursesPage = () => {
                     >
                         {/* Reemplazamos el contenido por el componente CourseCard */}
                         <CourseCard 
-                            url={course.url}
                             title={course.title}
                             author={course.author}
                             rating={course.rating}

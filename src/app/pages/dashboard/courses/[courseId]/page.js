@@ -6,7 +6,7 @@ import Cookies from 'js-cookie';
 import ReactPlayer from 'react-player';
 import { useUser } from '../../../../context/userContext.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar, faRegStar } from '@fortawesome/free-solid-svg-icons';
+import { faStar, faHeart } from '@fortawesome/free-solid-svg-icons';
 
 const CourseDetail = ({ params }) => {
     const { userId } = useUser();
@@ -18,6 +18,7 @@ const CourseDetail = ({ params }) => {
     const [selectedVideo, setSelectedVideo] = useState(null); // Estado para el video seleccionado
     const [rating, setRating] = useState(0); // Estado para la calificación seleccionada
     const [hoveredRating, setHoveredRating] = useState(0); // Estado para el hover
+    const [isFavorite, setIsFavorite] = useState(false);
     const token = Cookies.get('token');
 
     useEffect(() => {
@@ -29,10 +30,13 @@ const CourseDetail = ({ params }) => {
                     }
                 });
                 const data = await response.json();
-
+    
                 if (response.ok) {
-                    setCourse(data.course); // Asumimos que 'data' es el curso completo
-                    setSelectedVideo(data.course.videos[0]); // Seleccionar el primer video como predeterminado
+                    setCourse(data.course);
+                    setSelectedVideo(data.course.videos[0]);
+                    
+                    // Verificar si el curso ya está en favoritos
+                    setIsFavorite(data.course.isFavorite);  // Este valor se debe enviar desde el backend
                 } else {
                     setNotification({ message: data.message || 'Error al obtener el curso', status: data.status });
                 }
@@ -43,11 +47,11 @@ const CourseDetail = ({ params }) => {
                 setLoading(false);
             }
         };
-
+    
         if (courseId) {
             fetchCourse();
         }
-    }, [courseId]);
+    }, [courseId]); 
 
     const handleVideoSelect = (video) => {
         setSelectedVideo(video);
@@ -149,16 +153,51 @@ const CourseDetail = ({ params }) => {
             console.error('Error al agregar comentario:', error);
             setNotification({ message: 'Error en la conexión', status: 500 });
         }
-    };
+    };  
+
+    const handleToggleFavorite = async () => {
+        try {
+            const response = await fetch(`/api/courses/favorites/${courseId}`, {
+                method: isFavorite ? 'DELETE' : 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ userId }),
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+                setIsFavorite(!isFavorite);  // Cambiar el estado de favorito
+                setNotification({ message: isFavorite ? 'Curso eliminado de favoritos' : 'Curso agregado a favoritos', status: 200 });
+            } else {
+                setNotification({ message: data.message || 'Error al actualizar favorito', status: 500 });
+            }
+        } catch (error) {
+            console.error('Error al agregar/eliminar favorito:', error);
+            setNotification({ message: 'Error en la conexión', status: 500 });
+        }
+    };    
 
     return (
         <div>
-            {notification && <div>{notification.message}</div>}
             {loading ? (
                 <div>Cargando...</div>
             ) : course ? (
                 <div className='flex flex-col gap-4'>
-                    <h1 className='font-bold text-lg text-neutral-700'>{course.title}</h1>
+                    <div className='flex justify-between items-center'>
+                        <h1 className='font-bold text-lg text-neutral-700'>{course.title}</h1>
+                        <div className="flex items-center gap-2">
+                            <p className="font-semibold text-neutral-700">Favorito:</p>
+                            <button className='btn-secondary' onClick={handleToggleFavorite}>
+                                <FontAwesomeIcon 
+                                    icon={isFavorite ? faHeart : faHeart } 
+                                    className={isFavorite ? 'text-yellow-400' : 'text-gray-400'} 
+                                />
+                            </button>
+                        </div>
+                    </div>
                     
                     <div className="video-container flex rounded-lg overflow-hidden">
                         {/* Columna de video principal */}

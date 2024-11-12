@@ -17,9 +17,8 @@ const Header = ({ onToggleSidebar, isSidebarOpen }) => {
       <div className='w-[13.7vw] min-w-[200px] flex items-center justify-between gap-6'>
         <h1 className='font-bold text-lg text-neutral-600'>Funlo</h1>
         <FontAwesomeIcon
-            className='cursor-pointer text-neutral-600 border border-neutral-300 rounded py-2 px-2.5'
+            className='cursor-pointer text-neutral-600 border border-neutral-300 rounded py-2 px-2.5 max-w-8'
             icon={isSidebarOpen ? faTimes : faBars}
-            size='lg'
             onClick={onToggleSidebar}
         />
       </div>
