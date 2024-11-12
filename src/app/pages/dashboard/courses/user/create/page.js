@@ -99,7 +99,7 @@ const CourseForm = () => {
             });
             const data = await response.json();
             if (data.status === 200) {
-                router.push('/pages/dashboard/courses/upload');
+                router.push('/pages/dashboard/courses');
             } else {
                 setNotification({ message: data.message, status: data.status });
             }

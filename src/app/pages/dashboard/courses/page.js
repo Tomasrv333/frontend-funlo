@@ -118,7 +118,7 @@ const CoursesPage = () => {
 
         // Actualizar la URL con los filtros seleccionados
         const updatedQuery = new URLSearchParams(filters).toString();
-        router.push(`/courses?${updatedQuery}`); // Actualiza la URL en la barra de direcciones
+        router.push(`/pages/dashboard/courses?${updatedQuery}`); // Actualiza la URL en la barra de direcciones
     };
 
     const filteredCategories = filters.areaId
