@@ -33,6 +33,7 @@ const Page = () => {
         });
 
         const data = await response.json();
+        setIsLoading(false);
 
         if (response.ok) {
           setCourses(data.courses || []);
