@@ -30,10 +30,6 @@ export default function Login() {
             });
 
             const data = await response.json();
-<<<<<<< HEAD
-=======
-            console.log(data)
->>>>>>> 13266fb (fix: errores)
 
             if (data.status == 200) {
                 // Guarda el token en una cookie
@@ -43,8 +39,6 @@ export default function Login() {
                     sameSite: 'strict'
                 });
 
-<<<<<<< HEAD
-=======
                 // Guarda el token en una cookie
                 Cookies.set('_id', data.userId, { 
                     expires: 7,
@@ -52,7 +46,6 @@ export default function Login() {
                     sameSite: 'strict'
                 });
 
->>>>>>> 13266fb (fix: errores)
                 login(data.userId);
 
                 // Redirigir al dashboard

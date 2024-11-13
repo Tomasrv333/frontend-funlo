@@ -5,13 +5,8 @@ import { useUser } from '@/app/context/userContext';
 import CourseCard from '@/app/components/courses/courseCard';
 import Cookies from 'js-cookie';
 
-<<<<<<< HEAD
-const Page = () => {
-  const { userId } = useUser(); 
-=======
 const FavoritePage = () => {
   const userId = Cookies.get('_id'); 
->>>>>>> 13266fb (fix: errores)
   const [courses, setCourses] = useState([]);
   const [isLoading, setIsLoading] = useState(true); 
   const [notification, setNotification] = useState(null); 
@@ -53,15 +48,8 @@ const FavoritePage = () => {
       }
     };
 
-<<<<<<< HEAD
-    if (userId) {
-      fetchFavoriteCourses();
-    }
-  }, [userId]);
-=======
     fetchFavoriteCourses();
   }, []);
->>>>>>> 13266fb (fix: errores)
 
   return (
     <div>
@@ -93,8 +81,4 @@ const FavoritePage = () => {
   );
 };
 
-<<<<<<< HEAD
-export default Page;
-=======
 export default FavoritePage;
->>>>>>> 13266fb (fix: errores)

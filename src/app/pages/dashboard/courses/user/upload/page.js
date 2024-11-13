@@ -4,11 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useUser } from '../../../../../context/userContext';
 import Cookies from 'js-cookie';
 
-<<<<<<< HEAD
-const Page = () => {
-=======
 const UploadPage = () => {
->>>>>>> 13266fb (fix: errores)
   const { userId } = useUser(); 
   const [courses, setCourses] = useState([]);
   const [isLoading, setIsLoading] = useState(true); 
@@ -16,12 +12,7 @@ const UploadPage = () => {
   const [editCourse, setEditCourse] = useState(null); // Estado para el curso que se está editando
 
   useEffect(() => {
-<<<<<<< HEAD
-    const fetchCourses = async () => {
-      setIsLoading(true); 
-=======
     const fetchCourses = async () => { 
->>>>>>> 13266fb (fix: errores)
       setCourses([]); 
 
       const queryParams = new URLSearchParams();
@@ -30,11 +21,8 @@ const UploadPage = () => {
       const requestUrl = `/api/courses/get?${queryParams.toString()}`;
 
       try {
-<<<<<<< HEAD
-=======
         setIsLoading(true);
 
->>>>>>> 13266fb (fix: errores)
         const response = await fetch(requestUrl, {
           method: 'GET',
           headers: {
@@ -44,11 +32,6 @@ const UploadPage = () => {
         });
 
         const data = await response.json();
-<<<<<<< HEAD
-        console.log(data)
-        setIsLoading(false);
-=======
->>>>>>> 13266fb (fix: errores)
 
         if (response.ok) {
           setCourses(data.courses || []);
@@ -63,15 +46,8 @@ const UploadPage = () => {
       }
     };
 
-<<<<<<< HEAD
-    if (userId) {
-      fetchCourses();
-    }
-  }, [userId]);
-=======
     fetchCourses();
   }, []);
->>>>>>> 13266fb (fix: errores)
 
   const handleEditCourse = (course) => {
     setEditCourse(course); // Cargar el curso a editar
@@ -260,8 +236,4 @@ const UploadPage = () => {
   );
 };
 
-<<<<<<< HEAD
-export default Page;
-=======
 export default UploadPage;
->>>>>>> 13266fb (fix: errores)

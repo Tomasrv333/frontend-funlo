@@ -49,10 +49,6 @@ export async function POST(req) {
     });
 
     const data = await response.json();
-<<<<<<< HEAD
-    console.log(data)
-=======
->>>>>>> 13266fb (fix: errores)
 
     if (response.ok) {
       return NextResponse.json({

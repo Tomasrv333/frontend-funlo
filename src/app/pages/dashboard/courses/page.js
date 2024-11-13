@@ -1,11 +1,7 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-<<<<<<< HEAD
-import { useState, useEffect } from 'react';
-=======
 import { Suspense, useState, useEffect } from 'react';
->>>>>>> 13266fb (fix: errores)
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Cookies from 'js-cookie';
@@ -130,105 +126,6 @@ const CoursesPage = () => {
     : [];
 
     return (
-<<<<<<< HEAD
-        <div className="search-bar">
-            {/* Barra de búsqueda con filtros */}
-            <div className="filter-wrapper w-full flex justify-between items-end">
-                <div className="filter-menu flex items-center gap-3">
-                    {/* Filtro de Área */}
-                    <div className="w-fit flex flex-col">
-                        <label>Área:</label>
-                        <select
-                            name="areaId"
-                            value={filters.areaId}
-                            onChange={handleFilterChange}
-                        >
-                            <option value="">Todas las áreas</option>
-                            {areas.map((area) => (
-                                <option key={area.id} value={area.id}>{area.name}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="w-fit flex flex-col">
-                        <label>Carrera:</label>
-                        <select
-                            name="categoryId"
-                            value={filters.categoryId}
-                            onChange={handleFilterChange}
-                            disabled={!filters.areaId}
-                        >
-                            <option value="">Todas las carreras</option>
-                            {filteredCategories.map((category) => (
-                                <option key={category.id} value={category.id}>{category.name}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    {/* Filtro de Calificación */}
-                    <div className="w-fit flex flex-col">
-                        <label>Calificación:</label>
-                        <select
-                            name="rating"
-                            value={filters.rating}
-                            onChange={handleFilterChange}
-                        >
-                            <option value="">Todas las calificaciones</option>
-                            <option value="4">4 estrellas y más</option>
-                            <option value="5">5 estrellas</option>
-                        </select>
-                    </div>
-
-                    {/* Filtro de Fecha de Inicio */}
-                    <div className="w-fit flex flex-col">
-                        <label>Fecha de inicio:</label>
-                        <DatePicker
-                            selected={filters.startDate}
-                            onChange={(date) => setFilters({ ...filters, startDate: date })}
-                            placeholderText="Selecciona una fecha"
-                        />
-                    </div>
-
-                    {/* Filtro de Fecha de Fin */}
-                    <div className="w-fit flex flex-col">
-                        <label>Fecha de fin:</label>
-                        <DatePicker
-                            selected={filters.endDate}
-                            onChange={(date) => setFilters({ ...filters, endDate: date })}
-                            placeholderText="Selecciona una fecha"
-                        />
-                    </div>
-                </div>
-
-                <button onClick={() => setFilters({ ...filters })} className="btn-secondary">
-                    Aplicar filtros
-                </button>
-            </div>
-
-            {/* Lista de cursos filtrados */}
-            <div className="courses-list mt-5 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-                {isLoading && <p>Cargando cursos...</p>}
-                {courses.length === 0 && !isLoading && (
-                    <p>No hay cursos disponibles que coincidan con los filtros aplicados.</p>
-                )}
-                {courses.map(course => (
-                    <div
-                        key={course._id}
-                        className="cursor-pointer"
-                        onClick={() => router.push(`/pages/dashboard/courses/${course._id}`)}
-                    >
-                        {/* Reemplazamos el contenido por el componente CourseCard */}
-                        <CourseCard 
-                            title={course.title}
-                            author={course.author}
-                            rating={course.rating}
-                            thumbnailUrl={course.thumbnailUrl}
-                        />
-                    </div>
-                ))}
-            </div>
-        </div>
-=======
         <Suspense fallback={<div>Loading...</div>}>
             <div className="search-bar">
                 {/* Barra de búsqueda con filtros */}
@@ -328,7 +225,6 @@ const CoursesPage = () => {
                 </div>
             </div>
         </Suspense>
->>>>>>> 13266fb (fix: errores)
     );
 };
 

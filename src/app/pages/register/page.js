@@ -10,26 +10,17 @@ import AlertNotification from '../../components/notifications/formNotification';
 export default function Register() {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false);
-<<<<<<< HEAD
-    const [username, setUsername] = useState('');
-=======
->>>>>>> 13266fb (fix: errores)
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [notification, setNotification] = useState({ message: '', status: null });
 
-<<<<<<< HEAD
-=======
     // Expresión regular para validar el correo en el formato "nombre.apellido@dominio.com"
     const emailRegex = /^[a-zA-Z]+\.[a-zA-Z]+@[a-zA-Z]+\.[a-zA-Z\.]+$/;
 
->>>>>>> 13266fb (fix: errores)
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
 
-<<<<<<< HEAD
-=======
         // Validar el formato del correo
         if (!emailRegex.test(email)) {
             setIsLoading(false);
@@ -56,7 +47,6 @@ export default function Register() {
 
         console.log(username, email, password)
 
->>>>>>> 13266fb (fix: errores)
         try {
             const response = await fetch('/api/auth/register', {
                 method: 'POST',
@@ -67,14 +57,8 @@ export default function Register() {
             })
 
             const data = await response.json();
-<<<<<<< HEAD
-
-            if (data.status == 200) {
-=======
-            console.log(data)
 
             if (data.status == '200') {
->>>>>>> 13266fb (fix: errores)
                 // Guarda el token en una cookie
                 Cookies.set('token', data.token, { 
                     expires: 7,
@@ -104,11 +88,7 @@ export default function Register() {
                     <h2 className='text-lg font-semibold text-primary'>Funlo</h2>
                     <h1 className='text-3xl font-bold text-black'>Registrate</h1>
                     <form onSubmit={handleSubmit} className='flex flex-col gap-3'>
-<<<<<<< HEAD
-                        <div className='flex flex-col'>
-=======
                         {/* <div className='flex flex-col'>
->>>>>>> 13266fb (fix: errores)
                             <label className='mb-2'>Usuario</label>
                             <input
                                 type="text"
@@ -116,11 +96,7 @@ export default function Register() {
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                             />
-<<<<<<< HEAD
-                        </div>
-=======
                         </div> */}
->>>>>>> 13266fb (fix: errores)
                         <div className='flex flex-col'>
                             <label className='mb-2'>Correo</label>
                             <input

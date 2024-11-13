@@ -3,26 +3,15 @@
 import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
-<<<<<<< HEAD
-import { useUser } from '../../../../../context/userContext';
-import AlertNotification from '../../../../../components/notifications/formNotification';
-
-const CourseForm = () => {
-    const { userId } = useUser();
-=======
 import { useUser } from '@/app/context/userContext';
 import AlertNotification from '@/app/components/notifications/formNotification';
 
 const CourseForm = () => {
->>>>>>> 13266fb (fix: errores)
     const router = useRouter();
     const [notification, setNotification] = useState({ message: '', status: null });
     const [areas, setAreas] = useState([]);
     const token = Cookies.get('token');
-<<<<<<< HEAD
-=======
     const userId = Cookies.get('_id');
->>>>>>> 13266fb (fix: errores)
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -33,19 +22,7 @@ const CourseForm = () => {
         areaId: ''
     });
 
-<<<<<<< HEAD
-    // Hook para actualizar creatorId en formData cuando userId esté disponible
-    useEffect(() => {
-        if (userId) {
-            setFormData(prevFormData => ({
-                ...prevFormData,
-                creatorId: userId
-            }));
-        }
-    }, [userId]);
-=======
     console.log(userId)
->>>>>>> 13266fb (fix: errores)
 
     // Cargar áreas y categorías
     useEffect(() => {
@@ -102,9 +79,6 @@ const CourseForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-<<<<<<< HEAD
-        console.log(formData)
-=======
         
         if (userId) {
             setFormData(prevFormData => ({
@@ -115,7 +89,6 @@ const CourseForm = () => {
 
         console.log(formData)
 
->>>>>>> 13266fb (fix: errores)
         try {
             const response = await fetch('/api/courses/post', {
                 method: 'POST',
@@ -127,11 +100,7 @@ const CourseForm = () => {
             });
             const data = await response.json();
             if (data.status === 200) {
-<<<<<<< HEAD
-                router.push('/pages/dashboard/courses');
-=======
                 router.push('/pages/dashboard/courses/user/upload');
->>>>>>> 13266fb (fix: errores)
             } else {
                 setNotification({ message: data.message, status: data.status });
             }
