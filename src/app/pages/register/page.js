@@ -45,8 +45,6 @@ export default function Register() {
         // Generar el username a partir del correo
         const username = `${firstName} ${lastName}`;
 
-        console.log(username, email, password)
-
         try {
             const response = await fetch('/api/auth/register', {
                 method: 'POST',
