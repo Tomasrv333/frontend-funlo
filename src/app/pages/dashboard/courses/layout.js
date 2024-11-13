@@ -1,7 +1,11 @@
 "use client"
 
 import Header from '../../../components/header';
+<<<<<<< HEAD
 import { useState } from 'react';
+=======
+import { Suspense, useState } from 'react';
+>>>>>>> 13266fb (fix: errores)
 
 export default function Layout({ children }) {
 
@@ -16,7 +20,13 @@ export default function Layout({ children }) {
         </div>    
       </div>
       <div className="w-full flex justify-center h-[calc(100%-8rem)]">
+<<<<<<< HEAD
         <div className="w-full p-6 overflow-y-auto overflow-x-hidden">{children}</div>
+=======
+        <Suspense>
+          <div className="w-full p-6 overflow-y-auto overflow-x-hidden">{children}</div>
+        </Suspense>
+>>>>>>> 13266fb (fix: errores)
       </div>
     </div>
   );

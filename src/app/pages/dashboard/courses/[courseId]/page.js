@@ -1,7 +1,11 @@
 "use client"
 
 import { useEffect, useState } from 'react';
+<<<<<<< HEAD
 import { useSearchParams } from 'next/navigation';
+=======
+import { useRouter } from 'next/navigation';
+>>>>>>> 13266fb (fix: errores)
 import Cookies from 'js-cookie';
 import ReactPlayer from 'react-player';
 import { useUser } from '../../../../context/userContext.js';
@@ -20,6 +24,10 @@ const CourseDetail = ({ params }) => {
     const [hoveredRating, setHoveredRating] = useState(0); // Estado para el hover
     const [isFavorite, setIsFavorite] = useState(false);
     const token = Cookies.get('token');
+<<<<<<< HEAD
+=======
+    const router = useRouter();
+>>>>>>> 13266fb (fix: errores)
 
     useEffect(() => {
         const fetchCourse = async () => {
@@ -144,8 +152,13 @@ const CourseDetail = ({ params }) => {
                     ...prevCourse,
                     comments: data.comments, // Actualizamos los comentarios
                 }));
+<<<<<<< HEAD
                 setNewComment(''); // Limpiar el campo de comentario
                 setNotification({ message: 'Comentario agregado exitosamente', status: 200 });
+=======
+                
+                window.location.reload();
+>>>>>>> 13266fb (fix: errores)
             } else {
                 setNotification({ message: data.message || 'Error al agregar el comentario', status: 500 });
             }
@@ -280,7 +293,11 @@ const CourseDetail = ({ params }) => {
                             </div>
                         </div>
 
+<<<<<<< HEAD
                         {course?.comments.length > 0 ? (
+=======
+                        {course?.comments?.length > 0 ? (
+>>>>>>> 13266fb (fix: errores)
                             course.comments.map((comment, index) => (
                                 <div key={index} className="flex items-center gap-4 py-2">
                                     <div className='w-12 h-12 rounded-full bg-neutral-300'>

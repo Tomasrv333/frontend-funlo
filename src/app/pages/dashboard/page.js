@@ -65,7 +65,11 @@ export default function Page() {
     return (
         <div className='p-6'>
             <div 
+<<<<<<< HEAD
                 className="bg-primary h-[30vh] rounded-lg mb-8"
+=======
+                className="bg-primary h-[45vh] rounded-lg mb-8"
+>>>>>>> 13266fb (fix: errores)
                 style={{ backgroundImage: `url(/images/bg-dashboard.jpeg)`, backgroundSize: 'cover', backgroundPosition: 'center' }} 
             ></div>
             <div className="flex flex-col">
@@ -74,7 +78,11 @@ export default function Page() {
                 </div>
                 <h1 className='font-semibold text-black text-xl mb-4'>Explora nuevos cursos</h1>
                 {/* Lista de cursos filtrados */}
+<<<<<<< HEAD
                 <div className="courses-list mt-5 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+=======
+                <div className="courses-list grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+>>>>>>> 13266fb (fix: errores)
                     {isLoading && <p>Cargando cursos...</p>}
                     {courses.length === 0 && !isLoading && (
                         <p>No hay cursos disponibles que coincidan con los filtros aplicados.</p>
