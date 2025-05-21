@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
 import LoaderOverlay from '../../components/loaders/spinnerOverlay';
 import AlertNotification from '../../components/notifications/formNotification';
 import { useUser } from '../../context/userContext';
@@ -30,8 +31,20 @@ export default function Login() {
             });
 
             const data = await response.json();
+            console.log('Respuesta del login:', data);
 
             if (data.status == 200) {
+                // Decodificar el token para obtener el userId
+                const decodedToken = jwtDecode(data.token);
+                console.log('Token decodificado:', decodedToken);
+
+                if (!decodedToken.id) {
+                    console.error('No se encontró el id en el token:', decodedToken);
+                    setNotification({ message: 'Error: Token inválido', status: 500 });
+                    setIsLoading(false);
+                    return;
+                }
+
                 // Guarda el token en una cookie
                 Cookies.set('token', data.token, { 
                     expires: 7,
@@ -39,7 +52,8 @@ export default function Login() {
                     sameSite: 'strict'
                 });
 
-                login(data.userId);
+                console.log('Intentando login con userId:', decodedToken.id);
+                login(decodedToken.id);
 
                 // Redirigir al dashboard
                 router.push('/pages/dashboard');
@@ -51,6 +65,7 @@ export default function Login() {
         } catch (error) {
             console.error('Error en la solicitud:', error);
             setNotification({ message: 'Error en la conexión al servidor', status: 500 });
+            setIsLoading(false);
         }
     };
 

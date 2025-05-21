@@ -1,12 +1,18 @@
 "use client"
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Cookies from 'js-cookie';
 import ReactPlayer from 'react-player';
 import { useUser } from '../../../../context/userContext.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar, faHeart } from '@fortawesome/free-solid-svg-icons';
+import { faStar, faHeart, faCalendar, faUser, faCommentDots } from '@fortawesome/free-solid-svg-icons';
+
+const TABS = [
+  { key: 'contenido', label: 'Contenido' },
+  { key: 'descripcion', label: 'Descripción' },
+  { key: 'comentarios', label: 'Comentarios' },
+];
 
 const CourseDetail = ({ params }) => {
     const { userId } = useUser();
@@ -20,6 +26,8 @@ const CourseDetail = ({ params }) => {
     const [hoveredRating, setHoveredRating] = useState(0); // Estado para el hover
     const [isFavorite, setIsFavorite] = useState(false);
     const token = Cookies.get('token');
+    const [activeTab, setActiveTab] = useState('contenido');
+    const commentsRef = useRef(null);
 
     useEffect(() => {
         const fetchCourse = async () => {
@@ -57,9 +65,14 @@ const CourseDetail = ({ params }) => {
         setSelectedVideo(video);
     };
 
-    const extractYoutubeThumbnail = (url) => {
-        const videoId = url.split('v=')[1]?.split('&')[0];
-        return videoId ? `https://img.youtube.com/vi/${videoId}/0.jpg` : '';
+    const getVideoThumbnail = (url) => {
+        // Extrae miniatura de YouTube si es posible
+        if (url.includes('youtube.com') || url.includes('youtu.be')) {
+            const match = url.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
+            const id = match ? match[1] : null;
+            return id ? `https://img.youtube.com/vi/${id}/mqdefault.jpg` : null;
+        }
+        return null;
     };
 
     // Función para manejar el hover sobre las estrellas
@@ -180,126 +193,137 @@ const CourseDetail = ({ params }) => {
         }
     };    
 
+    const handleTabChange = (tab) => {
+        setActiveTab(tab);
+        if (tab === 'comentarios' && commentsRef.current) {
+            setTimeout(() => commentsRef.current.scrollIntoView({ behavior: 'smooth' }), 100);
+        }
+    };
+
     return (
-        <div>
+        <div className="max-w-4xl mx-auto py-8">
             {loading ? (
-                <div>Cargando...</div>
+                <div className="flex justify-center items-center h-64 text-lg text-gray-500">Cargando...</div>
             ) : course ? (
-                <div className='flex flex-col gap-4'>
-                    <div className='flex justify-between items-center'>
-                        <h1 className='font-bold text-lg text-neutral-700'>{course.title}</h1>
+                <div className="flex flex-col gap-8">
+                    {/* Header visual */}
+                    <div className="bg-white rounded-2xl shadow p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 border border-gray-100">
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-800 mb-2 flex items-center gap-2">
+                                {course.title}
+                            </h1>
+                            <div className="flex items-center gap-4 text-sm text-gray-500 mb-2">
+                                <span className="flex items-center gap-1"><FontAwesomeIcon icon={faUser} className="text-blue-500" /> {course.author}</span>
+                                <span className="flex items-center gap-1"><FontAwesomeIcon icon={faCalendar} className="text-blue-300" /> {course.date ? new Date(course.date).toLocaleDateString() : 'Sin fecha'}</span>
+                                <span className="flex items-center gap-1"><FontAwesomeIcon icon={faStar} className="text-yellow-400" /> {course.averageRating || 0} / 5</span>
+                            </div>
+                        </div>
                         <div className="flex items-center gap-2">
-                            <p className="font-semibold text-neutral-700">Favorito:</p>
-                            <button className='btn-secondary' onClick={handleToggleFavorite}>
-                                <FontAwesomeIcon 
-                                    icon={isFavorite ? faHeart : faHeart } 
-                                    className={isFavorite ? 'text-yellow-400' : 'text-gray-400'} 
-                                />
+                            <button
+                                onClick={handleToggleFavorite}
+                                className={`rounded-full p-3 shadow transition-colors duration-200 bg-white border border-blue-100 hover:bg-blue-50 focus:ring-2 focus:ring-blue-300 relative group ${isFavorite ? 'animate-pulse' : ''}`}
+                                title={isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+                            >
+                                <FontAwesomeIcon icon={faHeart} className={isFavorite ? 'text-blue-500' : 'text-gray-300'} size="lg" />
+                                <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs rounded-full px-2 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity">{isFavorite ? 'Favorito' : 'Favorito'}</span>
                             </button>
                         </div>
                     </div>
-                    
-                    <div className="video-container flex rounded-lg overflow-hidden">
-                        {/* Columna de video principal */}
-                        <div className="flex-1 bg-[#404040]">
-                            {selectedVideo ? (
-                                <ReactPlayer
-                                    url={selectedVideo.url}
-                                    width="100%"
-                                    height="50vh"
-                                    controls={true}
-                                />
-                            ) : (
-                                <p>No hay video seleccionado</p>
+
+                    {/* Video principal y playlist */}
+                    <div className="bg-white rounded-2xl shadow p-6 border border-gray-100">
+                        <div className="flex flex-col md:flex-row gap-8">
+                            {/* Frame principal */}
+                            <div className="flex-1 min-w-0">
+                                <div className="w-full rounded-xl overflow-hidden bg-gray-200 flex items-center justify-center mb-4" style={{ minHeight: '360px', aspectRatio: '16/9' }}>
+                                    {selectedVideo && selectedVideo.url ? (
+                                        <ReactPlayer url={selectedVideo.url} width="100%" height="100%" controls style={{ borderRadius: '0.75rem', minHeight: '360px', maxHeight: '60vh' }} />
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center w-full h-full">
+                                            <svg width="64" height="64" fill="none" viewBox="0 0 64 64">
+                                                <rect width="64" height="64" rx="12" fill="#e0e7ff" />
+                                                <path d="M24 44V20l20 12-20 12z" fill="#6366f1" />
+                                            </svg>
+                                            <span className="text-gray-400 mt-2">No hay video seleccionado</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            {/* Playlist visual */}
+                            {course.videos && course.videos.length > 1 && (
+                                <div className="w-full md:w-64 flex-shrink-0">
+                                    <h3 className="font-semibold text-md mb-2 text-gray-700">Lista de reproducción</h3>
+                                    <div className="flex md:flex-col gap-2 overflow-x-auto md:overflow-y-auto pb-2 md:pb-0">
+                                        {course.videos.map((video, idx) => (
+                                            <button
+                                                key={idx}
+                                                onClick={() => handleVideoSelect(video)}
+                                                className={`flex items-center gap-3 p-2 rounded-lg border transition-colors duration-150 text-left min-w-[180px] md:min-w-0 w-full md:w-full ${selectedVideo && selectedVideo.url === video.url ? 'bg-blue-100 border-blue-400 text-blue-700 font-semibold' : 'bg-white border-gray-200 hover:bg-blue-50 text-gray-700'}`}
+                                                style={{ maxWidth: '100%' }}
+                                            >
+                                                {getVideoThumbnail(video.url) ? (
+                                                    <img src={getVideoThumbnail(video.url)} alt={video.title || `Video ${idx + 1}`} className="w-12 h-8 object-cover rounded" />
+                                                ) : (
+                                                    <div className="w-12 h-8 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">Sin miniatura</div>
+                                                )}
+                                                <div className="flex flex-col items-start overflow-hidden">
+                                                    <span className="text-xs text-gray-500">Video {idx + 1}</span>
+                                                    <span className="truncate max-w-[100px] md:max-w-[120px]">{video.title || `Video ${idx + 1}`}</span>
+                                                </div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
                             )}
                         </div>
 
-                        {/* Columna lateral de lista de videos */}
-                        <div className="w-1/3 flex flex-col gap-2 p-4 bg-neutral-200 overflow-y-auto">
-                            <p className='font-semibold text-base text-neutral-700'>Contenido</p>
-                            {course.videos.map((video, index) => (
-                                <div
-                                    key={index}
-                                    className="flex items-center gap-4 bg-neutral-300 rounded overflow-hidden cursor-pointer"
-                                    onClick={() => handleVideoSelect(video)}
-                                >
-                                    <img
-                                        src={extractYoutubeThumbnail(video.url)}
-                                        alt={video.title}
-                                        className="w-24 h-16 object-cover"
-                                    />
-                                    <div>
-                                        <p className="text-neutral-600 font-medium">{video.title}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    
-                    <p className='font-semibold text-neutral-700 text-lg'>Descripción</p>
-                    <p className=''>{course.description}</p>
-
-                    <div className='flex justify-between items-center'>
-                        <div className='flex items-center gap-4'>
-                            <p><span className='font-semibold text-neutral-700'>Autor:</span> {course.author}</p>
-                            <p><span className='font-semibold text-neutral-700'>Fecha:</span> {new Date(course.date).toLocaleDateString()}</p>
-                            <p><span className='font-semibold text-neutral-700'>Calificación:</span> {course.rating} / 5</p>
+                        {/* Descripción */}
+                        <div className="mb-6">
+                            <h2 className="font-semibold text-lg mb-2">Descripción</h2>
+                            <p className="text-gray-700">{course.description}</p>
                         </div>
 
-                        {/* Mostrar estrellas para calificar */}
-                        <div className="flex items-center">
-                            <p className="font-semibold text-neutral-700 mr-2">Calificar:</p>
-                            {renderStars()}
-                        </div>
-                    </div>
-
-                    {notification && (
-                        <div className={`mt-2 ${notification.status === 200 ? 'text-green-500' : 'text-red-500'}`}>
-                            {notification.message}
-                        </div>
-                    )}
-
-                    {/* Sección de comentarios */}
-                    <div className="comments-section">
-                        <h2 className="font-semibold text-neutral-700 text-lg">Comentarios</h2>
-                        {/* Formulario para agregar comentario */}
-                        <div className="add-comment my-4">
-                            <div className='flex items-end gap-4'>
-                                <textarea
-                                    value={newComment}
-                                    onChange={(e) => setNewComment(e.target.value)}
-                                    placeholder="Escribe tu comentario..."
-                                    className="w-full h-10 p-2 border-b bg-transparent focus:outline-none"
-                                />
-                                <button 
-                                    onClick={handleAddComment}
-                                    className="btn-secondary"
-                                >
-                                    Comentar
-                                </button>
+                        {/* Calificación */}
+                        <div className="mb-6">
+                            <h2 className="font-semibold text-lg mb-2">Califica este curso</h2>
+                            <div className="flex items-center gap-2">
+                                {renderStars()}
+                                {notification && (
+                                    <span className={`ml-4 text-sm ${notification.status === 200 ? 'text-green-500' : 'text-red-500'}`}>{notification.message}</span>
+                                )}
                             </div>
                         </div>
 
-                        {course?.comments.length > 0 ? (
-                            course.comments.map((comment, index) => (
-                                <div key={index} className="flex items-center gap-4 py-2">
-                                    <div className='w-12 h-12 rounded-full bg-neutral-300'>
-
-                                    </div>
-                                    <div>
-                                        <p><span className='font-semibold text-neutral-700'>{comment.author}</span> - {new Date(comment.date).toLocaleDateString()}</p>
-                                        <p>{comment.comment}</p>
-                                    </div>
-                                    
+                        {/* Comentarios */}
+                        <div>
+                            <h2 className="font-semibold text-lg mb-2 flex items-center gap-2"><FontAwesomeIcon icon={faCommentDots} className="text-blue-400" /> Comentarios</h2>
+                            <form onSubmit={handleAddComment} className="flex gap-2 mb-4">
+                                <input
+                                    type="text"
+                                    value={newComment}
+                                    onChange={e => setNewComment(e.target.value)}
+                                    placeholder="Escribe tu comentario..."
+                                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Comentar</button>
+                            </form>
+                            {course.comments && course.comments.length > 0 ? (
+                                <div className="space-y-4">
+                                    {course.comments.map((comment, idx) => (
+                                        <div key={idx} className="bg-gray-50 rounded-lg p-4 border border-gray-100 animate-fade-in-up">
+                                            <div className="text-sm text-gray-700 mb-1 font-semibold">{comment.userName || 'Usuario'}</div>
+                                            <div className="text-gray-600 text-sm">{comment.comment}</div>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))
-                        ) : (
-                            <p>No hay comentarios.</p>
-                        )}
+                            ) : (
+                                <div className="text-gray-400">No hay comentarios.</div>
+                            )}
+                        </div>
                     </div>
                 </div>
             ) : (
-                <div>No se encontró el curso.</div>
+                <div className="flex justify-center items-center h-64 text-lg text-gray-500">No se encontró el curso.</div>
             )}
         </div>
     );

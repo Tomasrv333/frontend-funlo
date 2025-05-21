@@ -22,14 +22,14 @@ const geistMono = localFont({
 
 export default function RootLayout({ children }) {
   return (
-    <UserProvider>
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <UserProvider>
         {children}
+        </UserProvider>
       </body>
     </html>
-    </UserProvider>
   );
 }
